@@ -25,6 +25,7 @@ app.post("/update-read-time", async (req, res) => {
   const { itemId, readTime } = req.body;
 
   if (!itemId || !readTime) {
+    console.error("❌ Missing itemId or readTime", req.body); // ✅ log what was received
     return res.status(400).json({ error: "Missing itemId or readTime" });
   }
 
@@ -48,7 +49,7 @@ app.post("/update-read-time", async (req, res) => {
     const data = await response.json();
 
     if (!response.ok) {
-      console.error("❌ Webflow API error:", data);
+      console.error("❌ Webflow API error:", data); // ✅ log full error
       return res.status(500).json({ error: data });
     }
 
@@ -58,8 +59,4 @@ app.post("/update-read-time", async (req, res) => {
     console.error("❌ Server error:", error.message);
     res.status(500).json({ error: error.message });
   }
-});
-
-app.listen(port, () => {
-  console.log(`🚀 Server running on port ${port}`);
 });
