@@ -1,6 +1,5 @@
 const express = require("express");
 const cors = require("cors");
-const fetch = require("node-fetch");
 
 const app = express();
 const port = 3000;
@@ -12,11 +11,11 @@ app.use(cors({
 
 app.use(express.json());
 
-// ✅ Replace with your actual Webflow token and collection ID
+// ✅ Your Webflow credentials
 const WEBFLOW_TOKEN = "df133e66658bd4fe79aaa2c7608bf45b6f522b4a6a7be7940def75d45b505423";
 const COLLECTION_ID = "685d1ba83913d89273584ae9";
 
-// ✅ Endpoint to update the CMS item's read-time field
+// ✅ Update Read Time endpoint
 app.post("/update-read-time", async (req, res) => {
   const { itemId, readTime } = req.body;
 
@@ -36,7 +35,7 @@ app.post("/update-read-time", async (req, res) => {
         isDraft: false,
         isArchived: false,
         fields: {
-          "read-time": readTime  // Make sure "read-time" is the correct field ID
+          "read-time": readTime  // Use correct field ID here
         }
       })
     });
