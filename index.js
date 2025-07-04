@@ -4,18 +4,19 @@ const cors = require("cors");
 const app = express();
 const port = 3000;
 
-// ✅ Allow requests from your Webflow domain
+// ✅ Enable CORS for Webflow domain
 app.use(cors({
-  origin: "https://asharibhussain.webflow.io"
+  origin: "https://asharibhussain.webflow.io", // ✅ your live site domain
+  methods: ["POST", "OPTIONS"],
+  allowedHeaders: ["Content-Type"],
 }));
 
 app.use(express.json());
 
-// ✅ Your Webflow credentials
 const WEBFLOW_TOKEN = "df133e66658bd4fe79aaa2c7608bf45b6f522b4a6a7be7940def75d45b505423";
 const COLLECTION_ID = "685d1ba83913d89273584ae9";
 
-// ✅ Update Read Time endpoint
+// ✅ PATCH Webflow CMS read-time field
 app.post("/update-read-time", async (req, res) => {
   const { itemId, readTime } = req.body;
 
@@ -35,7 +36,7 @@ app.post("/update-read-time", async (req, res) => {
         isDraft: false,
         isArchived: false,
         fields: {
-          "read-time": readTime  // Use correct field ID here
+          "read-time": readTime
         }
       })
     });
@@ -55,6 +56,9 @@ app.post("/update-read-time", async (req, res) => {
   }
 });
 
+// ✅ Required for CORS preflight
+app.options("/update-read-time", cors());
+
 app.listen(port, () => {
-  console.log(`🚀 Server is running at http://localhost:${port}`);
+  console.log(`🚀 Server running at http://localhost:${port}`);
 });
