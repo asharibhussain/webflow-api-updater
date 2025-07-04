@@ -1,22 +1,26 @@
 const express = require("express");
 const cors = require("cors");
+const fetch = require("node-fetch");
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
-// ✅ Enable CORS for Webflow domain
+// ✅ Enable CORS for Webflow
 app.use(cors({
-  origin: "https://asharibhussain.webflow.io", // ✅ your live site domain
+  origin: "https://asharibhussain.webflow.io",
   methods: ["POST", "OPTIONS"],
-  allowedHeaders: ["Content-Type"],
+  allowedHeaders: ["Content-Type"]
 }));
 
 app.use(express.json());
 
+// ✅ Replace with your actual Webflow token and collection ID
 const WEBFLOW_TOKEN = "df133e66658bd4fe79aaa2c7608bf45b6f522b4a6a7be7940def75d45b505423";
 const COLLECTION_ID = "685d1ba83913d89273584ae9";
 
-// ✅ PATCH Webflow CMS read-time field
+app.options("/update-read-time", cors()); // ⚠️ Required for preflight
+
+// ✅ CMS update endpoint
 app.post("/update-read-time", async (req, res) => {
   const { itemId, readTime } = req.body;
 
@@ -56,9 +60,6 @@ app.post("/update-read-time", async (req, res) => {
   }
 });
 
-// ✅ Required for CORS preflight
-app.options("/update-read-time", cors());
-
 app.listen(port, () => {
-  console.log(`🚀 Server running at http://localhost:${port}`);
+  console.log(`🚀 Server running on port ${port}`);
 });
