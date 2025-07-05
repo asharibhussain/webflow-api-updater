@@ -3,33 +3,41 @@ const cors = require("cors");
 const fetch = require("node-fetch");
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = 3000;
 
-// ✅ Enable CORS for Webflow
-app.use(cors({
-  origin: "https://asharibhussain.webflow.io",
-  methods: ["POST", "OPTIONS"],
-  allowedHeaders: ["Content-Type"]
-}));
+const WEBFLOW_TOKEN = "your_webflow_token";
+const COLLECTION_ID = "your_collection_id";
 
+app.use(cors());
 app.use(express.json());
 
-// ✅ Replace with your actual Webflow token and collection ID
-const WEBFLOW_TOKEN = "df133e66658bd4fe79aaa2c7608bf45b6f522b4a6a7be7940def75d45b505423";
-const COLLECTION_ID = "685d1ba83913d89273584ae9";
+app.post("/update-read-time-by-slug", async (req, res) => {
+  const { slug, readTime } = req.body;
 
-app.options("/update-read-time", cors()); // ⚠️ Required for preflight
-
-// ✅ CMS update endpoint
-app.post("/update-read-time", async (req, res) => {
-  const { itemId, readTime } = req.body;
-
-  if (!itemId || !readTime) {
-    return res.status(400).json({ error: "Missing itemId or readTime" });
+  if (!slug || !readTime) {
+    return res.status(400).json({ error: "Missing slug or readTime" });
   }
 
   try {
-    const response = await fetch(`https://api.webflow.com/v2/collections/${COLLECTION_ID}/items/${itemId}`, {
+    // Step 1: Get items from collection
+    const listRes = await fetch(`https://api.webflow.com/v2/collections/${COLLECTION_ID}/items`, {
+      headers: {
+        Authorization: `Bearer ${WEBFLOW_TOKEN}`,
+        "accept-version": "1.0.0"
+      }
+    });
+
+    const listData = await listRes.json();
+
+    const item = listData.items.find(item => item.slug === slug);
+    if (!item) {
+      return res.status(404).json({ error: "Item not found with that slug" });
+    }
+
+    const itemId = item._id;
+
+    // Step 2: Update that item
+    const patchRes = await fetch(`https://api.webflow.com/v2/collections/${COLLECTION_ID}/items/${itemId}`, {
       method: "PATCH",
       headers: {
         Authorization: `Bearer ${WEBFLOW_TOKEN}`,
@@ -45,21 +53,19 @@ app.post("/update-read-time", async (req, res) => {
       })
     });
 
-    const data = await response.json();
+    const patchData = await patchRes.json();
 
-    if (!response.ok) {
-      console.error("❌ Webflow API error:", data);
-      return res.status(500).json({ error: data });
+    if (!patchRes.ok) {
+      return res.status(500).json({ error: patchData });
     }
 
-    console.log("✅ CMS item updated:", data);
-    res.json({ success: true, result: data });
-  } catch (error) {
-    console.error("❌ Server error:", error.message);
-    res.status(500).json({ error: error.message });
+    res.json({ success: true, result: patchData });
+
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 });
 
 app.listen(port, () => {
-  console.log(`🚀 Server running on port ${port}`);
+  console.log(`🚀 Server is running on http://localhost:${port}`);
 });
