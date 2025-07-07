@@ -1,3 +1,5 @@
+
+require('dotenv').config();
 const express = require("express");
 const cors = require("cors");
 const fetch = require("node-fetch");
@@ -5,8 +7,8 @@ const fetch = require("node-fetch");
 const app = express();
 const port = 3000;
 
-const WEBFLOW_TOKEN = "your_webflow_token";
-const COLLECTION_ID = "your_collection_id";
+const WEBFLOW_TOKEN = process.env.WEBFLOW_TOKEN;
+const COLLECTION_ID = process.env.COLLECTION_ID;
 
 app.use(cors());
 app.use(express.json());
