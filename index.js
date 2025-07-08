@@ -1,17 +1,17 @@
-// index.js
-
 require('dotenv').config();
 const express = require("express");
 const cors = require("cors");
 const fetch = require("node-fetch");
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 const WEBFLOW_TOKEN = process.env.WEBFLOW_TOKEN;
 const COLLECTION_ID = process.env.COLLECTION_ID;
 
-app.use(cors());
+app.use(cors({
+  origin: "https://asharibhussain.webflow.io"
+}));
 app.use(express.json());
 
 app.post("/update-read-time-by-slug", async (req, res) => {
@@ -22,7 +22,7 @@ app.post("/update-read-time-by-slug", async (req, res) => {
   }
 
   try {
-    // Step 1: Get all CMS items
+    // Step 1: Get all items
     const listRes = await fetch(`https://api.webflow.com/v2/collections/${COLLECTION_ID}/items`, {
       headers: {
         Authorization: `Bearer ${WEBFLOW_TOKEN}`,
@@ -31,15 +31,15 @@ app.post("/update-read-time-by-slug", async (req, res) => {
     });
 
     const listData = await listRes.json();
-    const item = listData.items.find(item => item.slug === slug);
 
+    const item = listData.items.find(item => item.slug === slug);
     if (!item) {
       return res.status(404).json({ error: "Item not found with that slug" });
     }
 
     const itemId = item._id;
 
-    // Step 2: Update CMS item
+    // Step 2: Update item
     const patchRes = await fetch(`https://api.webflow.com/v2/collections/${COLLECTION_ID}/items/${itemId}`, {
       method: "PATCH",
       headers: {
