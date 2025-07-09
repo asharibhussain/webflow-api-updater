@@ -41,7 +41,7 @@ app.post("/update-read-time-by-slug", async (req, res) => {
 
     // Step 2: Update the CMS item
     const patchRes = await fetch(`https://api.webflow.com/v2/collections/${COLLECTION_ID}/items/${itemId}`, {
-      method: "post",
+      method: "PATCH",
       headers: {
         Authorization: `Bearer ${WEBFLOW_TOKEN}`,
         "accept-version": "1.0.0",
