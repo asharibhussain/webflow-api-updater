@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
+<<<<<<< HEAD
+=======
+    "start": "node index.js",
+>>>>>>> 87707e1bfcd31e1c7a95113c8c81a7029f43646f
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -13,6 +17,10 @@
     "cors": "^2.8.5",
     "dotenv": "^17.0.1",
     "express": "^5.1.0",
+<<<<<<< HEAD
     "node-fetch": "^3.3.2"
+=======
+    "node-fetch": "^2.7.0"
+>>>>>>> 87707e1bfcd31e1c7a95113c8c81a7029f43646f
   }
 }
